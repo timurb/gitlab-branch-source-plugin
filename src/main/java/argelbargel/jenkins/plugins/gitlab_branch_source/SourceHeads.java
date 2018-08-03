@@ -232,7 +232,7 @@ class SourceHeads {
                 mergeRequest.getId(),
                 mergeRequest.getTitle(),
                 mergeRequest.getIid(),
-                createBranch(mergeRequest.getSourceProjectId(), mergeRequest.getSourceBranch(), mergeRequest.getSha()),
+                createBranch(mergeRequest.getSourceProjectId(), mergeRequest.getSourceBranch(), retrieveBranchRevision(mergeRequest.getSourceBranch())),
                 createBranch(mergeRequest.getTargetProjectId(), targetBranch, retrieveBranchRevision(targetBranch)), Objects.equals(mergeRequest.getMergeStatus(), CAN_BE_MERGED));
 
         if (source.buildUnmerged(head)) {
