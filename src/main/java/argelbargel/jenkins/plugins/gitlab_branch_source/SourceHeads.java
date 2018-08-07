@@ -91,7 +91,9 @@ class SourceHeads {
     }
 
     private String retrieveMergeRequestRevision(String id) throws GitLabAPIException {
-        return api().getMergeRequest(source.getProjectId(), id).getSha();
+        GitLabMergeRequest mergeRequest = api().getMergeRequest(source.getProjectId(), id);
+
+        return retrieveBranchRevision(mergeRequest.getSourceBranch());
     }
 
     private String retrieveTagRevision(String name) throws GitLabAPIException {
