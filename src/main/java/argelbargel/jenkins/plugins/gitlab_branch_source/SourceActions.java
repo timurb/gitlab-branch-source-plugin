@@ -21,6 +21,7 @@ import jenkins.scm.api.SCMSourceEvent;
 import jenkins.scm.api.metadata.ObjectMetadataAction;
 import jenkins.scm.api.metadata.PrimaryInstanceMetadataAction;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
+import jenkins.scm.api.metadata.ContributorMetadataAction;
 import jenkins.scm.api.mixin.TagSCMHead;
 import org.apache.commons.lang.StringUtils;
 
@@ -76,6 +77,8 @@ class SourceActions {
         if (head instanceof ChangeRequestSCMHead) {
             GitLabMergeRequest mr = retrieveMergeRequest((ChangeRequestSCMHead) head, listener);
             linkAction = GitLabLinkAction.toMergeRequest(mr.getWebUrl());
+            actions.add(createAuthorMetadataAction(mr));
+            actions.add(createHeadMetadataAction(((GitLabSCMMergeRequestHead) head).getDescription(), ((GitLabSCMMergeRequestHead) head).getSource(), null, linkAction.getUrlName()));
             if (acceptMergeRequest(head)) {
                 boolean removeSourceBranch = mr.getRemoveSourceBranch() || removeSourceBranch(head);
                 actions.add(new GitLabSCMAcceptMergeRequestAction(mr, source.getMergeCommitMessage(), removeSourceBranch));
@@ -123,6 +126,10 @@ class SourceActions {
         return actions;
     }
 
+    private Action createAuthorMetadataAction(GitLabMergeRequest mr) {
+        return new ContributorMetadataAction(mr.getAuthor().getName(), mr.getAuthor().getUsername(), mr.getAuthor().getEmail());
+    }
+    
     private Action createHeadMetadataAction(String name, GitLabSCMHead head, String hash, String url) {
         return new GitLabSCMHeadMetadataAction(name, head.getProjectId(), head.getName(), hash, url);
     }
